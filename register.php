@@ -1,10 +1,23 @@
+```php
 <?php
 /**
- * Metin2-Flix Registration Handler
- * Alternative zu FormSubmit.co - falls du ein eigenes PHP-Backend verwenden möchtest
+ * Metin2-Flix Registration Handler mit PHPMailer
+ * Konfiguriert für Strato SMTP
  */
 
-// CORS Headers (falls die Seite auf anderer Domain liegt)
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+// PHPMailer laden (wähle eine Methode)
+// Methode 1: Mit Composer
+require 'vendor/autoload.php';
+
+// Methode 2: Manuell (falls kein Composer - dann diese Zeilen auskommentieren)
+// require 'PHPMailer/src/Exception.php';
+// require 'PHPMailer/src/PHPMailer.php';
+// require 'PHPMailer/src/SMTP.php';
+
+// CORS Headers
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
@@ -23,14 +36,37 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-// Konfiguration
-$ADMIN_EMAIL = 'kontakt@beardflix.de'; // DEINE E-MAIL HIER
-$SAVE_TO_FILE = true; // Registrierungen auch in Datei speichern?
-$REGISTRATIONS_FILE = 'registrations.txt';
+// ==========================================
+// KONFIGURATION - NUR PASSWORT ANPASSEN!
+// ==========================================
+$CONFIG = [
+    // Admin E-Mail (Empfänger)
+    'admin_email' => 'kontakt@beardflix.de',
+    
+    // SMTP Server Einstellungen (STRATO)
+    'smtp_host' => 'smtp.strato.de',
+    'smtp_port' => 465,
+    'smtp_username' => 'kontakt@beardflix.de',
+    'smtp_password' => 'Ovawerkstatt1!#',  // <--- HIER DEIN STRATO PASSWORT EINTRAGEN!
+    'smtp_encryption' => 'ssl',
+    
+    // Absender-Informationen
+    'smtp_from' => 'kontakt@beardflix.de',
+    'smtp_from_name' => 'Metin2-Flix Registration',
+    
+    // Debug-Modus (für Tests auf true setzen)
+    'debug_mode' => false,
+];
 
-// Rate Limiting (optional)
-$MAX_REQUESTS_PER_IP = 5; // Max 5 Registrierungen pro Stunde pro IP
+// Weitere Einstellungen
+$SAVE_TO_FILE = true;
+$REGISTRATIONS_FILE = 'registrations.txt';
 $RATE_LIMIT_FILE = 'rate_limits.json';
+$MAX_REQUESTS_PER_IP = 5;
+
+// ==========================================
+// FUNKTIONEN
+// ==========================================
 
 /**
  * Rate Limiting Check
@@ -44,14 +80,12 @@ function checkRateLimit($ip, $maxRequests, $limitFile) {
     $now = time();
     $hourAgo = $now - 3600;
     
-    // Alte Einträge löschen
     foreach ($limits as $key => $data) {
         if ($data['time'] < $hourAgo) {
             unset($limits[$key]);
         }
     }
     
-    // IP prüfen
     if (!isset($limits[$ip])) {
         $limits[$ip] = ['count' => 0, 'time' => $now];
     }
@@ -73,7 +107,6 @@ function checkRateLimit($ip, $maxRequests, $limitFile) {
 function validateInput($username, $password, $email) {
     $errors = [];
     
-    // Username
     if (empty($username) || strlen($username) < 3 || strlen($username) > 20) {
         $errors[] = 'Benutzername muss 3-20 Zeichen lang sein';
     }
@@ -82,12 +115,10 @@ function validateInput($username, $password, $email) {
         $errors[] = 'Benutzername darf nur Buchstaben, Zahlen und _ enthalten';
     }
     
-    // Password
     if (empty($password) || strlen($password) < 6) {
         $errors[] = 'Passwort muss mindestens 6 Zeichen lang sein';
     }
     
-    // Email (optional)
     if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = 'Ungültige E-Mail-Adresse';
     }
@@ -96,28 +127,121 @@ function validateInput($username, $password, $email) {
 }
 
 /**
- * Registrierung verarbeiten
+ * E-Mail mit PHPMailer senden
  */
+function sendEmailWithPHPMailer($config, $username, $password, $email, $ip, $timestamp) {
+    $mail = new PHPMailer(true);
+    
+    try {
+        if ($config['debug_mode']) {
+            $mail->SMTPDebug = 2;
+            $mail->Debugoutput = 'html';
+        }
+        
+        $mail->isSMTP();
+        $mail->Host       = $config['smtp_host'];
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $config['smtp_username'];
+        $mail->Password   = $config['smtp_password'];
+        $mail->SMTPSecure = $config['smtp_encryption'];
+        $mail->Port       = $config['smtp_port'];
+        $mail->CharSet    = 'UTF-8';
+        
+        $mail->setFrom($config['smtp_from'], $config['smtp_from_name']);
+        $mail->addAddress($config['admin_email']);
+        $mail->addReplyTo($config['smtp_from'], $config['smtp_from_name']);
+        
+        $mail->isHTML(true);
+        $mail->Subject = '🎮 Neue Metin2-Flix Registrierung';
+        
+        $mail->Body = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <style>
+                body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+                .container { background-color: #ffffff; border-radius: 8px; padding: 30px; max-width: 600px; margin: 0 auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+                h2 { color: #e50914; margin-top: 0; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                td { padding: 12px; border: 1px solid #ddd; }
+                td:first-child { background-color: #f8f8f8; font-weight: bold; width: 40%; }
+                .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px; text-align: center; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <h2>🎮 Neue Account-Registrierung</h2>
+                <p>Ein neuer Benutzer hat sich auf Metin2-Flix registriert:</p>
+                
+                <table>
+                    <tr>
+                        <td>Zeitpunkt</td>
+                        <td>$timestamp</td>
+                    </tr>
+                    <tr>
+                        <td>IP-Adresse</td>
+                        <td>$ip</td>
+                    </tr>
+                    <tr>
+                        <td>Benutzername</td>
+                        <td><strong>$username</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Passwort</td>
+                        <td><strong>$password</strong></td>
+                    </tr>
+                    <tr>
+                        <td>E-Mail</td>
+                        <td>" . ($email ?: '<em>Nicht angegeben</em>') . "</td>
+                    </tr>
+                </table>
+                
+                <div class='footer'>
+                    <p>Automatisch generiert von Metin2-Flix Registration System</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+        
+        $mail->AltBody = "=== Neue Metin2-Flix Registrierung ===\n\n";
+        $mail->AltBody .= "Zeitpunkt: $timestamp\n";
+        $mail->AltBody .= "IP-Adresse: $ip\n\n";
+        $mail->AltBody .= "Benutzername: $username\n";
+        $mail->AltBody .= "Passwort: $password\n";
+        $mail->AltBody .= "E-Mail: " . ($email ?: 'Nicht angegeben') . "\n\n";
+        $mail->AltBody .= "---\n";
+        $mail->AltBody .= "Automatisch generiert von Metin2-Flix Registration System";
+        
+        $mail->send();
+        return ['success' => true, 'message' => 'E-Mail erfolgreich gesendet'];
+        
+    } catch (Exception $e) {
+        error_log("PHPMailer Error: " . $mail->ErrorInfo);
+        return ['success' => false, 'message' => $mail->ErrorInfo];
+    }
+}
+
+// ==========================================
+// MAIN
+// ==========================================
 try {
-    // IP-Adresse für Rate Limiting
     $ip = $_SERVER['REMOTE_ADDR'];
     
-    // Rate Limiting prüfen
     if (!checkRateLimit($ip, $MAX_REQUESTS_PER_IP, $RATE_LIMIT_FILE)) {
         http_response_code(429);
         echo json_encode([
             'success' => false,
-            'message' => 'Zu viele Anfragen. Bitte warte eine Stunde.'
+            'message' => 'Zu viele Anfragen. Bitte warte eine Stunde und versuche es erneut.'
         ]);
         exit();
     }
     
-    // Daten auslesen
     $username = isset($_POST['username']) ? trim($_POST['username']) : '';
     $password = isset($_POST['password']) ? trim($_POST['password']) : '';
     $email = isset($_POST['email']) ? trim($_POST['email']) : '';
     
-    // Validierung
     $errors = validateInput($username, $password, $email);
     
     if (!empty($errors)) {
@@ -129,59 +253,40 @@ try {
         exit();
     }
     
-    // HTML-Entities für Sicherheit
     $username = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
     $password = htmlspecialchars($password, ENT_QUOTES, 'UTF-8');
     $email = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
     
-    // Zeitstempel
     $timestamp = date('Y-m-d H:i:s');
     
-    // E-Mail vorbereiten
-    $subject = 'Neue Metin2-Flix Registrierung';
-    $message = "Neue Account-Registrierung\n\n";
-    $message .= "Zeitpunkt: $timestamp\n";
-    $message .= "IP-Adresse: $ip\n\n";
-    $message .= "Benutzername: $username\n";
-    $message .= "Passwort: $password\n";
-    $message .= "E-Mail: " . ($email ?: 'Nicht angegeben') . "\n\n";
-    $message .= "---\n";
-    $message .= "Automatisch generiert von Metin2-Flix Registration System";
+    $emailResult = sendEmailWithPHPMailer($CONFIG, $username, $password, $email, $ip, $timestamp);
     
-    $headers = "From: noreply@metin2-flix.de\r\n";
-    $headers .= "Reply-To: noreply@metin2-flix.de\r\n";
-    $headers .= "X-Mailer: PHP/" . phpversion();
-    
-    // E-Mail senden
-    $emailSent = mail($ADMIN_EMAIL, $subject, $message, $headers);
-    
-    // In Datei speichern (optional)
     if ($SAVE_TO_FILE) {
         $logEntry = sprintf(
-            "[%s] IP: %s | User: %s | Pass: %s | Email: %s\n",
+            "[%s] IP: %s | User: %s | Pass: %s | Email: %s | EmailSent: %s\n",
             $timestamp,
             $ip,
             $username,
             $password,
-            $email ?: 'N/A'
+            $email ?: 'N/A',
+            $emailResult['success'] ? 'YES' : 'NO'
         );
         
         file_put_contents($REGISTRATIONS_FILE, $logEntry, FILE_APPEND | LOCK_EX);
     }
     
-    // Erfolgreiche Antwort
-    if ($emailSent) {
-        http_response_code(200);
+    http_response_code(200);
+    
+    if ($emailResult['success']) {
         echo json_encode([
             'success' => true,
-            'message' => 'Registrierung erfolgreich! Deine Daten wurden gesendet.'
+            'message' => 'Registrierung erfolgreich! Deine Daten wurden an den Administrator gesendet.'
         ]);
     } else {
-        // E-Mail fehlgeschlagen, aber in Datei gespeichert
-        http_response_code(200);
         echo json_encode([
             'success' => true,
-            'message' => 'Registrierung gespeichert (E-Mail-Versand fehlgeschlagen)'
+            'message' => 'Registrierung gespeichert. E-Mail-Versand fehlgeschlagen, aber Daten wurden lokal gespeichert.',
+            'debug' => $CONFIG['debug_mode'] ? $emailResult['message'] : null
         ]);
     }
     
@@ -189,7 +294,10 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Serverfehler: ' . $e->getMessage()
+        'message' => 'Serverfehler beim Verarbeiten der Registrierung.',
+        'debug' => $CONFIG['debug_mode'] ? $e->getMessage() : null
     ]);
 }
 ?>
+
+
