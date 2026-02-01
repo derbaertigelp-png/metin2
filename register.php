@@ -1,4 +1,3 @@
-```php
 <?php
 /**
  * Metin2-Flix Registration Handler mit PHPMailer
@@ -43,19 +42,19 @@ $CONFIG = [
     // Admin E-Mail (Empfänger)
     'admin_email' => 'kontakt@beardflix.de',
     
-    // SMTP Server Einstellungen (STRATO)
+    // SMTP Server Einstellungen (STRATO) - KORRIGIERT!
     'smtp_host' => 'smtp.strato.de',
     'smtp_port' => 465,
     'smtp_username' => 'kontakt@beardflix.de',
-    'smtp_password' => 'Ovawerkstatt1!#',  // <--- HIER DEIN STRATO PASSWORT EINTRAGEN!
+    'smtp_password' => 'Ovawerkstatt1!#',
     'smtp_encryption' => 'ssl',
     
     // Absender-Informationen
     'smtp_from' => 'kontakt@beardflix.de',
     'smtp_from_name' => 'Metin2-Flix Registration',
     
-    // Debug-Modus (für Tests auf true setzen)
-    'debug_mode' => false,
+    // Debug-Modus
+    'debug_mode' => true,
 ];
 
 // Weitere Einstellungen
@@ -127,15 +126,18 @@ function validateInput($username, $password, $email) {
 }
 
 /**
- * E-Mail mit PHPMailer senden
+ * E-Mail mit PHPMailer senden - VERBESSERT FÜR STRATO
  */
 function sendEmailWithPHPMailer($config, $username, $password, $email, $ip, $timestamp) {
     $mail = new PHPMailer(true);
     
     try {
+        // Server settings
         if ($config['debug_mode']) {
             $mail->SMTPDebug = 2;
-            $mail->Debugoutput = 'html';
+            $mail->Debugoutput = function($str, $level) {
+                error_log("PHPMailer [$level]: $str");
+            };
         }
         
         $mail->isSMTP();
@@ -143,14 +145,28 @@ function sendEmailWithPHPMailer($config, $username, $password, $email, $ip, $tim
         $mail->SMTPAuth   = true;
         $mail->Username   = $config['smtp_username'];
         $mail->Password   = $config['smtp_password'];
-        $mail->SMTPSecure = $config['smtp_encryption'];
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;  // SSL für Port 465
         $mail->Port       = $config['smtp_port'];
         $mail->CharSet    = 'UTF-8';
         
+        // WICHTIG für Strato: Timeout erhöhen
+        $mail->Timeout    = 30;
+        $mail->SMTPKeepAlive = true;
+        
+        // WICHTIG: Verify Peer für Strato ausschalten falls SSL-Probleme
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+        
+        // Recipients
         $mail->setFrom($config['smtp_from'], $config['smtp_from_name']);
         $mail->addAddress($config['admin_email']);
-        $mail->addReplyTo($config['smtp_from'], $config['smtp_from_name']);
         
+        // Content
         $mail->isHTML(true);
         $mail->Subject = '🎮 Neue Metin2-Flix Registrierung';
         
@@ -219,6 +235,7 @@ function sendEmailWithPHPMailer($config, $username, $password, $email, $ip, $tim
         
     } catch (Exception $e) {
         error_log("PHPMailer Error: " . $mail->ErrorInfo);
+        file_put_contents('email_errors.log', date('Y-m-d H:i:s') . " - " . $mail->ErrorInfo . "\n", FILE_APPEND);
         return ['success' => false, 'message' => $mail->ErrorInfo];
     }
 }
@@ -285,7 +302,7 @@ try {
     } else {
         echo json_encode([
             'success' => true,
-            'message' => 'Registrierung gespeichert. E-Mail-Versand fehlgeschlagen, aber Daten wurden lokal gespeichert.',
+            'message' => 'Registrierung gespeichert. E-Mail-Versand fehlgeschlagen: ' . $emailResult['message'],
             'debug' => $CONFIG['debug_mode'] ? $emailResult['message'] : null
         ]);
     }
@@ -299,5 +316,3 @@ try {
     ]);
 }
 ?>
-
-
