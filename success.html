@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metin2-Flix | Zahlung erfolgreich!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff3333;
+            --secondary: #00ffff;
+            --dark: #0a0a0f;
+            --darker: #050508;
+            --accent: #ffd700;
+            --glow: rgba(255, 51, 51, 0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--dark);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 50% 30%, rgba(0, 255, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(255, 215, 0, 0.06) 0%, transparent 50%);
+        }
+
+        .success-box {
+            background: rgba(5, 5, 8, 0.9);
+            border: 3px solid #00ff00;
+            padding: 4rem 3rem;
+            text-align: center;
+            max-width: 520px;
+            width: 90%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 60px rgba(0, 255, 0, 0.2);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .success-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.05), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .checkmark {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: rgba(0, 255, 0, 0.1);
+            border: 3px solid #00ff00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            animation: pop 0.5s ease 0.3s both;
+        }
+
+        .checkmark svg {
+            width: 44px;
+            height: 44px;
+            fill: none;
+            stroke: #00ff00;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.3); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00ff00, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 1;
+        }
+
+        p {
+            color: #ccc;
+            font-size: 1.2rem;
+            line-height: 1.7;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 1.2rem 3rem;
+            background: linear-gradient(135deg, var(--primary), #ff6666);
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            box-shadow: 0 8px 30px var(--glow);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .btn-back::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-back:hover::before {
+            left: 100%;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px var(--glow);
+        }
+
+        .footer-text {
+            margin-top: 2.5rem;
+            color: #555;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <div class="success-box">
+        <div class="checkmark">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h1>Zahlung erfolgreich!</h1>
+        <p>Deine <span class="highlight">Coins</span> wurden deinem Account gutgeschrieben.</p>
+        <p>Logge dich im Spiel ein, um sie im Item-Shop zu verwenden.</p>
+        <a href="index.html#coinshop" class="btn-back">Zurück zur Seite</a>
+    </div>
+
+    <div class="footer-text">
+        <p>&copy; 2026 Metin2-Flix</p>
+    </div>
+</body>
+</html>

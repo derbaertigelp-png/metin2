@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metin2-Flix | Das epische MMORPG-Abenteuer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff3333;
+            --secondary: #00ffff;
+            --dark: #0a0a0f;
+            --darker: #050508;
+            --accent: #ffd700;
+            --glow: rgba(255, 51, 51, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--dark);
+            color: #fff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 51, 51, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.02) 2px, rgba(255, 255, 255, 0.02) 4px);
+            animation: scan 8s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 0 30px var(--glow);
+        }
+
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px var(--glow);
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 2rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px var(--glow);
+            line-height: 1.2;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 20px var(--glow)); }
+            50% { filter: drop-shadow(0 0 40px var(--glow)); }
+        }
+
+        .hero .tagline {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-bottom: 3rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1.2rem 3rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #ff6666);
+            color: #fff;
+            box-shadow: 0 10px 40px var(--glow);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px var(--glow);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--secondary);
+            border: 3px solid var(--secondary);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary);
+            color: var(--dark);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 255, 255, 0.5);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 6rem 2rem;
+            background: rgba(5, 5, 8, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .features-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 4rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(255, 51, 51, 0.05), rgba(0, 255, 255, 0.05));
+            padding: 3rem 2rem;
+            border: 2px solid rgba(255, 51, 51, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 51, 51, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 60px var(--glow);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .feature-card p {
+            color: #ccc;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        /* Download Section */
+        .download-section {
+            padding: 6rem 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(255, 51, 51, 0.1), rgba(0, 255, 255, 0.1));
+        }
+
+        .download-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .download-box {
+            background: rgba(10, 10, 15, 0.8);
+            border: 3px solid var(--primary);
+            padding: 4rem;
+            margin-top: 3rem;
+            box-shadow: 0 0 60px var(--glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 51, 51, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .download-info {
+            margin-bottom: 2rem;
+        }
+
+        .download-info p {
+            font-size: 1.3rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        .version {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        /* ============================================================
+           DONATION / COIN SHOP SECTION
+           ============================================================ */
+        .donation-section {
+            padding: 6rem 2rem;
+            background: rgba(5, 5, 8, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .donation-container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .donation-subtitle {
+            text-align: center;
+            color: var(--secondary);
+            font-size: 1.2rem;
+            margin-top: -2.5rem;
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        /* Account Input */
+        .account-box {
+            background: rgba(255, 51, 51, 0.05);
+            border: 2px solid rgba(255, 51, 51, 0.3);
+            padding: 2rem 2.5rem;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+            transition: all 0.3s;
+        }
+
+        .account-box:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px var(--glow);
+        }
+
+        .account-box label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent);
+            white-space: nowrap;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .account-box input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.9rem 1.2rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 2px solid rgba(255, 51, 51, 0.2);
+            color: #fff;
+            font-size: 1.1rem;
+            font-family: 'Rajdhani', sans-serif;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .account-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--glow);
+        }
+
+        .account-box input::placeholder {
+            color: #666;
+        }
+
+        .balance-tag {
+            padding: 0.7rem 1.4rem;
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: var(--accent);
+            white-space: nowrap;
+            letter-spacing: 1px;
+        }
+
+        .balance-tag .coin-val {
+            font-weight: 900;
+            font-size: 1rem;
+        }
+
+        /* Packages Grid */
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .pkg-card {
+            background: linear-gradient(135deg, rgba(255, 51, 51, 0.05), rgba(0, 255, 255, 0.03));
+            border: 2px solid rgba(255, 51, 51, 0.25);
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+        }
+
+        .pkg-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 51, 51, 0.08), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .pkg-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 50px var(--glow);
+        }
+
+        .pkg-card:hover::before {
+            opacity: 1;
+        }
+
+        .pkg-card.selected {
+            border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3), 0 15px 50px var(--glow);
+        }
+
+        .pkg-card.selected::after {
+            content: '\2713';
+            position: absolute;
+            top: 10px;
+            right: 14px;
+            color: var(--accent);
+            font-size: 1.3rem;
+            font-weight: 900;
+        }
+
+        .pkg-coins {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent), #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .pkg-label {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .pkg-price {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            position: relative;
+            z-index: 1;
+        }
+
+        .pkg-price .eur {
+            font-size: 0.8rem;
+            color: #888;
+            font-weight: 400;
+        }
+
+        /* Best Value Badge */
+        .pkg-card.best-value {
+            border-color: rgba(255, 215, 0, 0.4);
+        }
+
+        .pkg-card.best-value .pkg-badge {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--accent), #ff8800);
+            color: var(--dark);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 900;
+            padding: 4px 16px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Payment Box */
+        .payment-box {
+            background: rgba(10, 10, 15, 0.8);
+            border: 3px solid var(--primary);
+            padding: 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 40px var(--glow);
+        }
+
+        .payment-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 51, 51, 0.08), transparent);
+            animation: shimmer 4s infinite;
+        }
+
+        .payment-box h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--secondary);
+            margin-bottom: 2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 1;
+        }
+
+        .pay-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-pay {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1.1rem 2.5rem;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 240px;
+            justify-content: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-pay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-pay:not(:disabled):hover::before {
+            left: 100%;
+        }
+
+        .btn-pay:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-pay svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .btn-stripe {
+            background: linear-gradient(135deg, #635bff, #8b85ff);
+            color: #fff;
+            box-shadow: 0 8px 30px rgba(99, 91, 255, 0.3);
+        }
+
+        .btn-stripe:not(:disabled):hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(99, 91, 255, 0.5);
+        }
+
+        .btn-paypal {
+            background: linear-gradient(135deg, #0070ba, #00a0e4);
+            color: #fff;
+            box-shadow: 0 8px 30px rgba(0, 112, 186, 0.3);
+        }
+
+        .btn-paypal:not(:disabled):hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 112, 186, 0.5);
+        }
+
+        /* Status Bar */
+        .donate-status {
+            margin-top: 1.5rem;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            display: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .donate-status.error {
+            display: block;
+            background: rgba(255, 51, 51, 0.1);
+            border: 2px solid rgba(255, 51, 51, 0.4);
+            color: #ff6666;
+        }
+
+        .donate-status.info {
+            display: block;
+            background: rgba(0, 255, 255, 0.05);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            color: var(--secondary);
+        }
+
+        .donate-status.success {
+            display: block;
+            background: rgba(0, 255, 0, 0.05);
+            border: 2px solid rgba(0, 255, 0, 0.3);
+            color: #66ff66;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--darker);
+            border: 3px solid var(--primary);
+            padding: 3rem;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 0 80px var(--glow);
+            animation: slideDown 0.4s;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--primary);
+            transition: transform 0.3s;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 51, 51, 0.3);
+            color: #fff;
+            font-size: 1.1rem;
+            font-family: 'Rajdhani', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--glow);
+        }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .success-message {
+            display: none;
+            background: rgba(0, 255, 0, 0.1);
+            border: 2px solid #00ff00;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            color: #00ff00;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .error-message {
+            display: none;
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid var(--primary);
+            padding: 1.5rem;
+            margin-top: 1rem;
+            color: var(--primary);
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--darker);
+            border-top: 2px solid var(--primary);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            color: #888;
+            font-size: 1.1rem;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: var(--secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero .tagline {
+                font-size: 1.3rem;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .download-box {
+                padding: 2rem;
+            }
+
+            .packages-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .pkg-coins {
+                font-size: 1.8rem;
+            }
+
+            .btn-pay {
+                min-width: 200px;
+                padding: 1rem 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .account-box {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .payment-box {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <header>
+        <nav>
+            <div class="logo">METIN2-FLIX</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#download">Download</a></li>
+                <li><a href="#coinshop">Coin Shop</a></li>
+                <li><a href="#register" class="register-link">Registrieren</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>METIN2-FLIX</h1>
+            <p class="tagline">Erlebe das ultimative MMORPG-Abenteuer</p>
+            <p style="font-size: 1.3rem; color: #ccc; margin-bottom: 2rem;">
+                Tauche ein in eine Welt voller Kämpfe, Quests und epischer Schlachten. 
+                Schließe dich Tausenden von Spielern an und werde zur Legende!
+            </p>
+            <div class="cta-buttons">
+                <button class="btn btn-primary" onclick="scrollToDownload()">
+                    Jetzt Spielen
+                </button>
+                <button class="btn btn-secondary register-link">
+                    Account Erstellen
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="features-container">
+            <h2 class="section-title">Warum Metin2-Flix?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">&#x2694;&#xFE0F;</div>
+                    <h3>Epische Kämpfe</h3>
+                    <p>Erlebe intensive PvP- und PvE-Kämpfe mit einem ausgefeilten Kampfsystem. Meistere verschiedene Waffen und Fähigkeiten!</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F3F0;</div>
+                    <h3>Riesige Welt</h3>
+                    <p>Erkunde eine massive Open World mit Dungeons, Städten und geheimen Gebieten. Jede Ecke birgt neue Abenteuer!</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F465;</div>
+                    <h3>Starke Community</h3>
+                    <p>Schließe dich Gilden an, finde Verbündete und kämpfe gemeinsam gegen mächtige Bosse und feindliche Spieler!</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F3AF;</div>
+                    <h3>Tägliche Events</h3>
+                    <p>Nimm an regelmäßigen Events teil und sichere dir exklusive Belohnungen, Items und Ausrüstung!</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x26A1;</div>
+                    <h3>Schnelle Updates</h3>
+                    <p>Unser Auto-Update-System sorgt dafür, dass dein Client immer auf dem neuesten Stand ist. Kein manuelles Patchen nötig!</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F6E1;&#xFE0F;</div>
+                    <h3>Sicherer Server</h3>
+                    <p>Genieße ein faires Spielerlebnis auf unseren stabilen und sicheren Servern mit aktivem Anti-Cheat-System!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="download" class="download-section">
+        <div class="download-content">
+            <h2 class="section-title">Launcher Download</h2>
+            <div class="download-box">
+                <div class="download-info">
+                    <p>Bereit für dein Abenteuer?</p>
+                    <p>Lade den Metin2-Flix Launcher herunter und starte sofort!</p>
+                    <p class="version">Version 1.0 | Größe: ~15 MB</p>
+                </div>
+                <button class="btn btn-primary" onclick="downloadLauncher()">
+                    Launcher Herunterladen
+                </button>
+                <p style="margin-top: 2rem; color: #888; font-size: 1rem;">
+                    Der Launcher lädt automatisch alle benötigten Dateien herunter und hält deinen Client aktuell.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         COIN SHOP / DONATION SECTION
+         ============================================================ -->
+    <section id="coinshop" class="donation-section">
+        <div class="donation-container">
+            <h2 class="section-title">Coin Shop</h2>
+            <p class="donation-subtitle">Unterstütze den Server und erhalte exklusive Ingame-Vorteile</p>
+
+            <!-- Account Input -->
+            <div class="account-box">
+                <label for="donateAccount">Account:</label>
+                <input
+                    type="text"
+                    id="donateAccount"
+                    placeholder="Dein Metin2-Flix Login-Name..."
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+                <div class="balance-tag" id="balanceTag" style="display: none;">
+                    Guthaben: <span class="coin-val" id="coinBalance">0</span> Coins
+                </div>
+            </div>
+
+            <!-- Packages -->
+            <div class="packages-grid" id="packagesGrid">
+                <!-- wird per JS gefuellt -->
+            </div>
+
+            <!-- Payment -->
+            <div class="payment-box">
+                <h3>Zahlungsmethode wählen</h3>
+                <div class="pay-buttons">
+                    <button class="btn-pay btn-stripe" id="btnStripe" disabled onclick="startCheckout('stripe')">
+                        <svg viewBox="0 0 24 24"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/></svg>
+                        Kreditkarte
+                    </button>
+                    <button class="btn-pay btn-paypal" id="btnPaypal" disabled onclick="startCheckout('paypal')">
+                        <svg viewBox="0 0 24 24"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/></svg>
+                        PayPal
+                    </button>
+                </div>
+                <div class="donate-status" id="donateStatus"></div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Registration Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Account Registrierung</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="username">Benutzername</label>
+                    <input type="text" id="username" name="username" required minlength="3" maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label for="password">Passwort</label>
+                    <input type="password" id="password" name="password" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="email">E-Mail (Optional)</label>
+                    <input type="email" id="email" name="email" placeholder="Für Accountwiederherstellung">
+                </div>
+                <button type="submit" class="btn btn-primary submit-btn">
+                    Account Erstellen
+                </button>
+                <div class="success-message" id="successMessage">
+                    Registrierung erfolgreich! Deine Daten wurden gesendet.
+                </div>
+                <div class="error-message" id="errorMessage">
+                    Fehler bei der Registrierung. Bitte versuche es erneut.
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Metin2-Flix | Alle Rechte vorbehalten</p>
+        <p>Kontakt: <a href="mailto:kontakt@beardflix.de">kontakt@beardflix.de</a></p>
+        <p style="margin-top: 8px; font-size: 0.9rem;">Zahlungen werden sicher über Stripe und PayPal abgewickelt.</p>
+    </footer>
+
+    <script>
+        // ============================================================
+        // NAVIGATION & MODAL
+        // ============================================================
+        const modal = document.getElementById('registerModal');
+        const registerLinks = document.querySelectorAll('.register-link');
+        const closeBtn = document.querySelector('.close');
+
+        registerLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                modal.style.display = 'flex';
+            });
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            resetForm();
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                resetForm();
+            }
+        });
+
+        // ============================================================
+        // REGISTRATION FORM
+        // ============================================================
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const email = document.getElementById('email').value;
+            
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+            
+            try {
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('password', password);
+                formData.append('email', email || 'Nicht angegeben');
+                formData.append('_subject', 'Neue Metin2-Flix Registrierung');
+                formData.append('_captcha', 'false');
+                
+                const response = await fetch('https://formsubmit.co/kontakt@beardflix.de', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    successMsg.style.display = 'block';
+                    document.getElementById('registerForm').reset();
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        resetForm();
+                    }, 3000);
+                } else {
+                    errorMsg.style.display = 'block';
+                }
+            } catch (error) {
+                errorMsg.style.display = 'block';
+                console.error('Error:', error);
+            }
+        });
+
+        function resetForm() {
+            document.getElementById('registerForm').reset();
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function scrollToDownload() {
+            document.getElementById('download').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function downloadLauncher() {
+            const launcherUrl = 'https://github.com/derbaertigelp-png/metin2/raw/refs/heads/main/Metin2Flix_Setup.exe';
+            const link = document.createElement('a');
+            link.href = launcherUrl;
+            link.download = 'Metin2FlixLauncher.exe';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            alert('Download gestartet! Bitte warte, bis der Launcher heruntergeladen wurde.');
+        }
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#register') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // ============================================================
+        // COIN SHOP / DONATION LOGIC
+        // ============================================================
+
+        // WICHTIG: Diese URL auf deine Backend-Server-URL aendern!
+        const API_BASE = "http://127.0.0.1:5000";
+
+        let selectedPackage = null;
+        let coinPackages = [];
+        let accountOk = false;
+        let debounceTimer = null;
+
+        // --- Pakete laden ---
+        async function loadPackages() {
+            try {
+                const res = await fetch(API_BASE + "/api/packages");
+                const data = await res.json();
+                coinPackages = data.packages || [];
+            } catch (e) {
+                coinPackages = [
+                    {id: "pack_100",  coins: 100,  price: 5.00,  label: "100 Coins"},
+                    {id: "pack_500",  coins: 500,  price: 20.00, label: "500 Coins"},
+                    {id: "pack_1000", coins: 1000, price: 35.00, label: "1000 Coins"},
+                    {id: "pack_2500", coins: 2500, price: 75.00, label: "2500 Coins"},
+                ];
+            }
+            renderPackages();
+        }
+
+        function renderPackages() {
+            const grid = document.getElementById("packagesGrid");
+            grid.innerHTML = "";
+            const bestIdx = coinPackages.length - 1;
+
+            coinPackages.forEach(function(pkg, i) {
+                const card = document.createElement("div");
+                card.className = "pkg-card" + (i === bestIdx ? " best-value" : "");
+                card.setAttribute("data-id", pkg.id);
+                card.onclick = function() { selectPackage(pkg.id); };
+
+                let html = "";
+                if (i === bestIdx) {
+                    html += '<div class="pkg-badge">Bester Wert</div>';
+                }
+                html += '<div class="pkg-coins">' + pkg.coins.toLocaleString("de-DE") + '</div>';
+                html += '<div class="pkg-label">Coins</div>';
+                html += '<div class="pkg-price">' + pkg.price.toFixed(2).replace(".", ",") + ' <span class="eur">EUR</span></div>';
+                card.innerHTML = html;
+                grid.appendChild(card);
+            });
+        }
+
+        function selectPackage(pkgId) {
+            selectedPackage = pkgId;
+            document.querySelectorAll(".pkg-card").forEach(function(el) {
+                el.classList.toggle("selected", el.getAttribute("data-id") === pkgId);
+            });
+            updatePayButtons();
+        }
+
+        // --- Account pruefen ---
+        document.getElementById("donateAccount").addEventListener("input", function() {
+            clearTimeout(debounceTimer);
+            var name = this.value.trim();
+            if (name.length < 2) {
+                accountOk = false;
+                document.getElementById("balanceTag").style.display = "none";
+                updatePayButtons();
+                return;
+            }
+            debounceTimer = setTimeout(function() { checkDonateAccount(name); }, 600);
+        });
+
+        async function checkDonateAccount(name) {
+            try {
+                const res = await fetch(API_BASE + "/api/coins/" + encodeURIComponent(name));
+                if (res.ok) {
+                    const data = await res.json();
+                    accountOk = true;
+                    document.getElementById("coinBalance").textContent = data.coins.toLocaleString("de-DE");
+                    document.getElementById("balanceTag").style.display = "";
+                    showDonateStatus("", "");
+                } else {
+                    accountOk = false;
+                    document.getElementById("balanceTag").style.display = "none";
+                    if (res.status === 404) {
+                        showDonateStatus("Account nicht gefunden. Bitte prüfe den Namen.", "error");
+                    }
+                }
+            } catch (e) {
+                accountOk = true;
+                document.getElementById("balanceTag").style.display = "none";
+            }
+            updatePayButtons();
+        }
+
+        function updatePayButtons() {
+            var canPay = selectedPackage && (accountOk || document.getElementById("donateAccount").value.trim().length >= 2);
+            document.getElementById("btnStripe").disabled = !canPay;
+            document.getElementById("btnPaypal").disabled = !canPay;
+        }
+
+        // --- Checkout starten ---
+        async function startCheckout(provider) {
+            var accountName = document.getElementById("donateAccount").value.trim();
+            if (!accountName) {
+                showDonateStatus("Bitte gib deinen Account-Namen ein.", "error");
+                return;
+            }
+            if (!selectedPackage) {
+                showDonateStatus("Bitte wähle ein Coin-Paket.", "error");
+                return;
+            }
+
+            var btn = (provider === "stripe") ? document.getElementById("btnStripe") : document.getElementById("btnPaypal");
+            var originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Laden...';
+
+            var endpoint = (provider === "stripe")
+                ? "/api/stripe/create-checkout"
+                : "/api/paypal/create-checkout";
+
+            try {
+                var res = await fetch(API_BASE + endpoint, {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        account_name: accountName,
+                        package_id: selectedPackage,
+                    }),
+                });
+
+                var data = await res.json();
+
+                if (res.ok && data.checkout_url) {
+                    showDonateStatus("Weiterleitung zur Zahlung...", "info");
+                    window.location.href = data.checkout_url;
+                } else {
+                    showDonateStatus(data.error || "Ein Fehler ist aufgetreten.", "error");
+                    btn.innerHTML = originalHTML;
+                    updatePayButtons();
+                }
+            } catch (e) {
+                showDonateStatus("Verbindung zum Server fehlgeschlagen. Ist die API erreichbar?", "error");
+                btn.innerHTML = originalHTML;
+                updatePayButtons();
+            }
+        }
+
+        function showDonateStatus(msg, type) {
+            var bar = document.getElementById("donateStatus");
+            if (!msg) { bar.style.display = "none"; return; }
+            bar.className = "donate-status " + type;
+            bar.textContent = msg;
+            bar.style.display = "block";
+        }
+
+        // URL-Parameter pruefen
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            if (params.get("cancelled") === "1") {
+                showDonateStatus("Zahlung abgebrochen.", "error");
+                setTimeout(function() {
+                    document.getElementById("coinshop").scrollIntoView({ behavior: "smooth" });
+                }, 300);
+            }
+            if (params.get("error")) {
+                showDonateStatus("Fehler: " + params.get("error"), "error");
+            }
+        })();
+
+        // Init Coin Shop
+        loadPackages();
+    </script>
+</body>
+</html>
